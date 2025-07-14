@@ -57,8 +57,8 @@ public class GS1UtilitiesController {
 	@Data
 	private static class GS1ImageRequest {
 		private String barcodeData;
-		int width;
-		int height;
+		private int width;
+		private int height;
 		private boolean humanReadable;
 	}
 	

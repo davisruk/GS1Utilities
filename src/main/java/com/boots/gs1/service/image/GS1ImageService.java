@@ -5,24 +5,36 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 
 import uk.org.okapibarcode.backend.DataMatrix;
+import uk.org.okapibarcode.backend.OkapiException;
 import uk.org.okapibarcode.backend.Symbol;
 import uk.org.okapibarcode.output.Java2DRenderer;
 
 @Service
 public class GS1ImageService {
+	// data must be in human readable form where AIs are delimited with []
 	public BufferedImage generateGS1BarcodeImage (String data, int width, int height) {
 		DataMatrix symbol = new DataMatrix();
         symbol.setDataType(Symbol.DataType.GS1);
-        symbol.setContent(data.strip());
-
+        for (int i = 1; i<=30; i++) {
+        	symbol.setPreferredSize(i);
+        	try {
+        		symbol.setContent(data);
+        		break;
+        	} catch (OkapiException ex) {
+      
+        	}
+        }
+        Logger.getGlobal().log(Level.INFO, "Optimal barcode size: " + symbol.getPreferredSize());
         int symbolWidth = symbol.getWidth();
         int symbolHeight = symbol.getHeight();
 
-        // Scale and center
+        // Scale and centre
         double scaleX = (double) width / symbolWidth;
         double scaleY = (double) height / symbolHeight;
         double scale = Math.min(scaleX, scaleY);
