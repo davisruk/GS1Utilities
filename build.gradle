@@ -20,12 +20,14 @@ configurations {
 }
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'uk.org.okapibarcode:okapibarcode:0.5.1'
+	implementation 'com.boots.gs1:GS1Interfacing:0.0.4-SNAPSHOT'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -20,8 +20,6 @@ import com.boots.gs1.service.image.GS1ImageService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.Data;
-
 @RestController
 @RequestMapping("/gs1utils")
 public class GS1UtilitiesController {
@@ -30,12 +28,6 @@ public class GS1UtilitiesController {
 	
 	@Autowired
 	private GS1ImageService imageService;
-	
-	@Data
-	public static class GSOneBarcodeRequest {
-		private boolean onlyPopulatedFields;
-		private String barcode;
-	}
 	
 	@PostMapping(path="/prettifyGS1",
 				produces = MediaType.APPLICATION_JSON_VALUE,
@@ -54,14 +46,6 @@ public class GS1UtilitiesController {
 			.body(retVal);
 	}
 	
-	@Data
-	private static class GS1ImageRequest {
-		private String barcodeData;
-		private int width;
-		private int height;
-		private boolean humanReadable;
-	}
-	
 	@PostMapping(path="/barcodeImage",
 			produces = MediaType.IMAGE_PNG_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -69,7 +53,7 @@ public class GS1UtilitiesController {
 		String barcode = request.getBarcodeData();
 		if (!request.isHumanReadable())
 			barcode = gs1Builder.transformToHumanReadableForm(barcode);
-		BufferedImage image = imageService.generateGS1BarcodeImage(barcode, request.width, request.height);
+		BufferedImage image = imageService.generateGS1BarcodeImage(barcode, request.getWidth(), request.getHeight());
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			ImageIO.write(image, "png", baos);
 			return ResponseEntity
@@ -78,4 +62,11 @@ public class GS1UtilitiesController {
 					.body(baos.toByteArray());
 		}
 	}
+	
+	@PostMapping(path="/barcodeFrom")
+	public ResponseEntity<GSOneBarcode> createBarcodeFromString (@RequestBody GSOneBarcodeRequest request){
+		GSOneBarcode b = gs1Builder.createGSOneFromBarcodeString(request.getBarcode());
+		return ResponseEntity.ok(b);
+	}
 }
+ 
